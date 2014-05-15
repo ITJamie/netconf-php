@@ -672,6 +672,8 @@ class Device {
     *       the cli command to be executed.
     *@return result of the command,as a String.
     */
+    // Warning: running the command 'show configuration | display set' does not return a correct xml reply, $this->last_rpc_reply has the correct reply but the convert to xml section does not work.
+    // Temp patch workaround 
      public function run_cli_command() {
         $rpcReply = "";
         $format = "text";
@@ -685,6 +687,9 @@ class Device {
         $rpc.="]]>]]>\n";
         $rpcReply = $this->get_rpc_reply($rpc);
         $this->last_rpc_reply = $rpcReply;
+        if(func_get_arg(0) == 'show configuration | display set'){
+        	return $rpcReply;
+        }
         trim($rpcReply);
         $xmlreply = $this->convert_to_xml($rpcReply);
         if (!$xmlreply) {
